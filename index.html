@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Learning Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #cbebff 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+        
+        .game-description {
+            color: #5c7cfa;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-bottom: 20px;
+        }
+        
+        /* Menu Styles */
+        .menu {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .menu::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+        
+        .menu-item {
+            background: white;
+            border-radius: 15px;
+            padding: 12px 20px;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            color: #343a40;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-item:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transition: height 0.3s ease;
+            z-index: 1;
+        }
+        
+        .menu-item:hover:after,
+        .menu-item:active:after {
+            height: 100%;
+        }
+        
+        .menu-item:hover,
+        .menu-item:active {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .menu-item.active {
+            border-color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .shapes { background-color: #ffd166; }
+        .fruits { background-color: #06d6a0; }
+        .vegetables { background-color: #118ab2; color: white; }
+        .animals { background-color: #ef476f; color: white; }
+        .home { background-color: #e9ecef; }
+        
+        /* Content Area */
+        .content-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        
+        .item-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .item-card:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .item-card:hover:after,
+        .item-card:active:after {
+            opacity: 1;
+        }
+        
+        .item-card:hover,
+        .item-card:active {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .item-card img {
+            width: 100%;
+            height: auto;
+            max-height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .item-card:hover img,
+        .item-card:active img {
+            transform: scale(1.1);
+        }
+        
+        .item-card .item-name {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            text-align: center;
+            color: #343a40;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        
+        .item-card:hover .item-name,
+        .item-card:active .item-name {
+            color: #ff6b6b;
+        }
+        
+        /* Home Content */
+        .home-content {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .home-content h2 {
+            color: #5c7cfa;
+            margin-bottom: 20px;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+        
+        .home-content p {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-bottom: 15px;
+            color: #495057;
+        }
+        
+        .welcome-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .welcome-image:hover,
+        .welcome-image:active {
+            transform: scale(1.02);
+        }
+        
+        .home-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .home-button {
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .home-button:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .home-button:hover:after,
+        .home-button:active:after {
+            width: 100%;
+        }
+        
+        .shapes-btn { background-color: #ffd166; color: #343a40; }
+        .fruits-btn { background-color: #06d6a0; color: #343a40; }
+        .vegetables-btn { background-color: #118ab2; color: white; }
+        .animals-btn { background-color: #ef476f; color: white; }
+        
+        .home-button:hover,
+        .home-button:active {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+        
+        .back-button {
+            background-color: #4dabf7;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .back-button:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover:after,
+        .back-button:active:after {
+            width: 100%;
+        }
+        
+        .back-button:hover,
+        .back-button:active {
+            background-color: #3b8fd8;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Sound button */
+        .sound-btn {
+            background-color: #ff9f1c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sound-btn:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+        
+        .sound-btn:hover:after,
+        .sound-btn:active:after {
+            width: 100%;
+        }
+        
+        .sound-btn:hover,
+        .sound-btn:active {
+            background-color: #f08700;
+            transform: scale(1.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+        }
+        
+        .sound-btn i {
+            font-size: 18px;
+            z-index: 2;
+        }
+        
+        /* Animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .content-area {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 15px;
+            }
+            
+            .home-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 280px;
+                margin: 20px auto 0;
+            }
+            
+            .home-button {
+                width: 100%;
+                text-align: center;
+            }
+        
+            /* For section transitions on mobile */
+            .section-enter {
+                animation: fadeIn 0.4s ease forwards;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .menu {
+                padding: 5px 0;
+                justify-content: flex-start;
+                margin-bottom: 20px;
+            }
+            
+            .menu-item {
+                padding: 10px 15px;
+                min-width: 100px;
+                text-align: center;
+            }
+            
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .item-card {
+                padding: 10px;
+            }
+            
+            .item-card img {
+                max-height: 90px;
+            }
+            
+            .content-area {
+                padding: 15px;
+                min-height: 350px;
+            }
+        
+            /* One-by-one scrolling for mobile */
+            .mobile-scroll-view {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .mobile-scroll-item {
+                width: 100%;
+                animation: slideIn 0.5s ease forwards;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) {
+            .menu-item:active {
+                transform: translateY(-3px);
+            }
+            
+            .item-card:active {
+                transform: scale(1.03);
+            }
+            
+            .home-button:active {
+                transform: translateY(-3px);
+            }
+        }
+        
+        /* Scrollable categories for mobile */
+        .scrollable-categories {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 0;
+            gap: 15px;
+            scrollbar-width: none;
+        }
+        
+        .scrollable-categories::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-item {
+            scroll-snap-align: start;
+            flex: 0 0 80%;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .category-item:hover,
+        .category-item:active {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Section transitions */
+        .section-transition {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .section-hidden {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fun Learning Adventure!</h1>
+            <p class="game-description">Learn shapes, fruits, vegetables, and animals with fun sounds!</p>
+        </header>
+        
+        <div class="menu">
+            <div class="menu-item home active" onclick="showSection('home')">Home</div>
+            <div class="menu-item shapes" onclick="showSection('shapes')">Shapes</div>
+            <div class="menu-item fruits" onclick="showSection('fruits')">Fruits</div>
+            <div class="menu-item vegetables" onclick="showSection('vegetables')">Vegetables</div>
+            <div class="menu-item animals" onclick="showSection('animals')">Animals</div>
+        </div>
+        
+        <div class="content-area">
+            <div id="home-section" class="fade-in">
+                <div class="home-content">
+                    <h2>Welcome to Fun Learning Adventure!</h2>
+                    <p>Hello there! Let's learn about shapes, fruits, vegetables, and animals!</p>
+                    <p>Click on any category to start learning.</p>
+                    
+                    <img src="apple.jpg" alt="Welcome" class="welcome-image">
+                    
+                    <div class="home-buttons">
+                        <div class="home-button shapes-btn" onclick="showSection('shapes')">Learn Shapes</div>
+                        <div class="home-button fruits-btn" onclick="showSection('fruits')">Learn Fruits</div>
+                        <div class="home-button vegetables-btn" onclick="showSection('vegetables')">Learn Vegetables</div>
+                        <div class="home-button animals-btn" onclick="showSection('animals')">Learn Animals</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="shapes-section" class="items-grid" style="display: none;"></div>
+            <div id="fruits-section" class="items-grid" style="display: none;"></div>
+            <div id="vegetables-section" class="items-grid" style="display: none;"></div>
+            <div id="animals-section" class="items-grid" style="display: none;"></div>
+        </div>
+        
+        <footer>
+            <p>Made with ❤️ for learning fun!</p>
+        </footer>
+    </div>
+
+    <script>
+
+// Data for all items
+const data = {
+    shapes: [
+        { name: "Circle", image: createShapeImage("circle"), audio: "Circle" },
+        { name: "Square", image: createShapeImage("square"), audio: "Square" },
+        { name: "Triangle", image: createShapeImage("triangle"), audio: "Triangle" },
+        { name: "Rectangle", image: createShapeImage("rectangle"), audio: "Rectangle" },
+        { name: "Oval", image: createShapeImage("oval"), audio: "Oval" },
+        { name: "Diamond", image: createShapeImage("diamond"), audio: "Diamond" },
+        { name: "Star", image: createShapeImage("star"), audio: "Star" },
+        { name: "Heart", image: createShapeImage("heart"), audio: "Heart" },
+        { name: "Hexagon", image: createShapeImage("hexagon"), audio: "Hexagon" },
+        { name: "Pentagon", image: createShapeImage("pentagon"), audio: "Pentagon" },
+        { name: "Crescent", image: createShapeImage("crescent"), audio: "Crescent" },
+        { name: "Cross", image: createShapeImage("cross"), audio: "Cross" },
+        { name: "Arrow", image: createShapeImage("arrow"), audio: "Arrow" },
+        { name: "Octagon", image: createShapeImage("octagon"), audio: "Octagon" },
+        { name: "Trapezoid", image: createShapeImage("trapezoid"), audio: "Trapezoid" },
+        { name: "Parallelogram", image: createShapeImage("parallelogram"), audio: "Parallelogram" },
+        { name: "Cube", image: createShapeImage("cube"), audio: "Cube" },
+        { name: "Sphere", image: createShapeImage("sphere"), audio: "Sphere" },
+        { name: "Cylinder", image: createShapeImage("cylinder"), audio: "Cylinder" },
+        { name: "Cone", image: createShapeImage("cone"), audio: "Cone" }
+    ],
+    fruits: [
+        { name: "Apple", image: "https://i.pinimg.com/originals/32/6d/6e/326d6eaf6c633c0d41c8e3cf1f4c927d.gif", audio: "Apple" },
+        { name: "Banana", image: "https://i.pinimg.com/originals/96/5d/d7/965dd731c94bddb4ae831da615cc0b95.gif", audio: "Banana" },
+        { name: "Orange", image: "https://cdn.dribbble.com/userupload/25982288/file/original-b18d5be61a93699e4c02d808082cf267.gif", audio: "Orange" },
+        { name: "Grapes", image: "https://media4.giphy.com/media/lOscn7gmtXUKTNSunV/giphy.gif?cid=6c09b952yjfv6afwqwe5j9c9otbtbpqwktc70mhx0papg81t&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s", audio: "Grapes" },
+        { name: "Strawberry", image: "https://www.icegif.com/wp-content/uploads/2022/08/icegif-915.gif", audio: "Strawberry" },
+        { name: "Watermelon", image: "https://media4.giphy.com/media/l2JJuGNzLVmLDcD0Q/giphy.gif?cid=6c09b952ee5odkpbn9dky7vu8gs6f15yy61bb5tv3ja0pdvp&ep=v1_gifs_search&rid=giphy.gif&ct=g", audio: "Watermelon" },
+        { name: "Pineapple", image: "https://media.tenor.com/1oe_g9wNurwAAAAM/pineapple-dance.gif", audio: "Pineapple" },
+        { name: "Mango", image: "https://img1.picmix.com/output/stamp/normal/4/4/9/3/1643944_c21de.gif", audio: "Mango" },
+        { name: "Kiwi", image: "https://img1.picmix.com/output/stamp/normal/5/9/6/4/2624695_0a08a.gif", audio: "Kiwi" },
+        { name: "Cherry", image: "https://i.pinimg.com/originals/f3/81/ff/f381ff1086484a25941756060c61a089.gif", audio: "Cherry" },
+        { name: "Peach", image: "https://i.gifer.com/origin/e2/e2880e44cba956134f8b6afcc11584cd_w200.gif", audio: "Peach" },
+        { name: "Pear", image: "https://media1.giphy.com/media/zo62zLL9zQAu0LWYCh/200w.gif?cid=6c09b952y3wfk93232ppg1i74p5xjd71k646x194gwm1tjbq&ep=v1_stickers_search&rid=200w.gif&ct=s", audio: "Pear" },
+        { name: "Blueberry", image: "https://mir-s3-cdn-cf.behance.net/project_modules/disp/5f89d679529149.5ccae68e78407.gif", audio: "Blueberry" },
+        { name: "Lemon", image: "https://i.pinimg.com/originals/de/cb/2a/decb2a1011d733e6800f4e9decf2b984.gif", audio: "Lemon" },
+        { name: "Papaya", image: "https://media2.giphy.com/media/fXWAoO993rIjlRsfa8/giphy.gif?cid=6c09b95257r1qfcgu9f8urlhywbbxv9dk7qspg8taj6898ek&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s", audio: "Papaya" },
+        { name: "Coconut", image: "https://media.baamboozle.com/uploads/images/370015/1626850401_44637_gif-url.gif", audio: "Coconut" },
+        { name: "Avocado", image: "https://cdn.dribbble.com/userupload/24618922/file/original-15ba202e9e541df5d6d94dfb3cb6423f.gif", audio: "Avocado" },
+        { name: "Pomegranate", image: "https://media4.giphy.com/media/4x7aaSsjGjfW3CE1gA/giphy.gif?cid=6c09b952ll78sqta4xd3k6ofzj4865ca1ey8rvk1v4ggdlro&ep=v1_stickers_search&rid=giphy.gif&ct=s", audio: "Pomegranate" },
+        { name: "Plum", image: "https://media4.giphy.com/media/b7J0GEAB8SD9BTDDDf/200w.gif?cid=6c09b952bocqkikrjhpdatuqlav0a0j4rvminh7w28iumpta&ep=v1_stickers_search&rid=200w.gif&ct=s", audio: "Plum" },
+        { name: "Dragon Fruit", image: "https://media0.giphy.com/media/QrPfGjUYiF3BldUIJq/giphy.gif?cid=6c09b952i01w00kmfuoxrsy087hcxqlz1m372ajpj5z0pjjk&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s", audio: "Dragon Fruit" }
+    ],
+    vegetables: [
+        { name: "Carrot", image: "https://i.pinimg.com/originals/54/de/91/54de91c58df367974665ce46b95ad6d8.gif", audio: "Carrot" },
+        { name: "Broccoli", image: "https://media.tenor.com/6JGpjbEgLdsAAAAM/yay-broccoli.gif", audio: "Broccoli" },
+        { name: "Tomato", image: "https://media1.giphy.com/media/WSxVrga7NqKlkmC13M/giphy.gif?cid=6c09b952bm4flfjtv9aaa7mpels08lmkn3lxevrw6463tv6v&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g", audio: "Tomato" },
+        { name: "Cucumber", image: "https://media.tenor.com/PruazNUhkFgAAAAM/love-cucumber-dance.gif", audio: "Cucumber" },
+        { name: "Potato", image: "https://cdn.pixabay.com/animation/2023/04/14/20/54/20-54-26-27_512.gif", audio: "Potato" },
+        { name: "Spinach", image: "https://media4.giphy.com/media/g7dLQILsdQq4yL9F5P/200w.gif?cid=6c09b9525ozu2o8gzzzc59vqm02581cztgjtnu4i4oekrp9v&ep=v1_stickers_search&rid=200w.gif&ct=s", audio: "Spinach" },
+        { name: "Onion", image: "https://i.pinimg.com/originals/d7/6f/f8/d76ff83f52c090aec3b3015ec1d13f58.gif", audio: "Onion" },
+        { name: "Bell Pepper", image: "https://i.pinimg.com/originals/9b/f8/b8/9bf8b865fd2994fe247dfc5ca59bd8e1.gif", audio: "Bell Pepper" },
+        { name: "Lettuce", image: "https://media1.giphy.com/media/EYti70jChQnEVM1bhM/giphy.gif?cid=6c09b9522zhc0h3ikvkgzviezzzy548hfbwj9rzl4mo5lmts&ep=v1_stickers_search&rid=giphy.gif&ct=s", audio: "Lettuce" },
+        { name: "Corn", image: "https://i.pinimg.com/originals/4d/2e/a9/4d2ea9da2281e65495dd8bc25bf6d519.gif", audio: "Corn" },
+        { name: "Peas", image: "https://i.pinimg.com/originals/5e/de/52/5ede52f7175b9bba780d8722751a28ea.gif", audio: "Peas" },
+        { name: "Eggplant", image: "https://i.pinimg.com/originals/70/d7/fb/70d7fbe4a602cc382d974d68e08c6201.gif", audio: "Eggplant" },
+        { name: "Cabbage", image: "https://media0.giphy.com/media/jLFjmy2gOcBVkjMhbT/source.gif", audio: "Cabbage" },
+        { name: "Garlic", image: "https://media.tenor.com/y2LEO5nSFzgAAAAM/forget-it-sighs.gif", audio: "Garlic" },
+        { name: "Cauliflower", image: "https://i.pinimg.com/originals/da/1d/f9/da1df93d70fac77aab31ff42fe2cff8d.gif", audio: "Cauliflower" },
+        { name: "Pumpkin", image: "https://www.icegif.com/wp-content/uploads/2023/10/icegif-66.gif", audio: "Pumpkin" },
+        { name: "Radish", image: "https://cdnb.artstation.com/p/assets/images/images/061/921/399/original/sergeev-georgy-radish-on-white-jump.gif?1681928833", audio: "Radish" },
+        { name: "Zucchini", image: "https://i.pinimg.com/originals/08/0f/48/080f48090358e9dc79308ea58ca44532.gif", audio: "Zucchini" },
+        { name: "Sweet Potato", image: "https://media1.giphy.com/media/SDEw2QzNdqWbLNre4C/giphy.gif", audio: "Sweet Potato" },
+        { name: "Asparagus", image: "https://media.tenor.com/3vL6ROOrv1AAAAAM/neopets-chia.gif", audio: "Asparagus" }
+    ],
+    animals: [
+        { name: "Cat", image: "https://i.pinimg.com/originals/9a/3c/3f/9a3c3fb5f73822af8514df07f6676392.gif", audio: "Cat" },
+        { name: "Dog", image: "https://www.animatedimages.org/data/media/202/animated-dog-image-0712.gif", audio: "Dog" },
+        { name: "Elephant", image: "https://i.pinimg.com/originals/a7/59/7f/a7597f0db79302ae9506f1d557dfd318.gif", audio: "Elephant" },
+        { name: "Lion", image: "https://i.pinimg.com/originals/c6/23/2e/c6232eb9e73363b99a8430fbc0f91def.gif", audio: "Lion" },
+        { name: "Monkey", image: "https://i.pinimg.com/originals/bc/4d/60/bc4d60701983f42881c44d8899fe6529.gif", audio: "Monkey" },
+        { name: "Zebra", image: "https://i.gifer.com/DHgp.gif", audio: "Zebra" },
+        { name: "Giraffe", image: "https://media2.giphy.com/media/H6VPKP45Nh8cYSv1Qe/200w.gif?cid=6c09b952ytwczphqjei4muyfvbsohkv45pkqiu4fzrbo8q73&ep=v1_gifs_search&rid=200w.gif&ct=g", audio: "Giraffe" },
+        { name: "Tiger", image: "https://i.pinimg.com/originals/b1/e0/d7/b1e0d7488d0d7e954a5644df6b794263.gif", audio: "Tiger" },
+        { name: "Penguin", image: "https://media.tenor.com/e9Ytk_aZgMcAAAAM/love-heart.gif", audio: "Penguin" },
+        { name: "Bear", image: "https://i.graphicmama.com/uploads/2023/3/641965c4a4490-brown-bear-animated-gifs.gif", audio: "Bear" },
+        { name: "Fox", image: "https://i.pinimg.com/originals/31/1e/6f/311e6f2f8a9a677534bee0f2965b4347.gif", audio: "Fox" },
+        { name: "Kangaroo", image: "https://media2.giphy.com/media/5HY40dpPiqUvZf5vr2/giphy.gif?cid=6c09b9528zen2r5hscv61ki401ofzwrmzbzvgqwk42uackfd&ep=v1_stickers_search&rid=giphy.gif&ct=s", audio: "Kangaroo" },
+        { name: "Horse", image: "https://i.gifer.com/origin/22/227f3dcd75f9a0cc3db1e32e61091fe3.gif", audio: "Horse" },
+        { name: "Cow", image: "https://www.animatedimages.org/data/media/211/animated-cow-image-0104.gif", audio: "Cow" },
+        { name: "Sheep", image: "https://img1.picmix.com/output/stamp/normal/2/8/5/5/1545582_059ac.gif", audio: "Sheep" },
+        { name: "Pig", image: "https://mir-s3-cdn-cf.behance.net/project_modules/disp/9c590853903501.59458ff923562.gif", audio: "Pig" },
+        { name: "Rabbit", image: "https://i.pinimg.com/originals/ec/0d/5f/ec0d5f135cd6ce5a9bfc1d0e756e1339.gif", audio: "Rabbit" },
+        { name: "Deer", image: "https://cdnl.iconscout.com/lottie/premium/thumb/deer-animation-download-in-lottie-json-gif-static-svg-file-formats--reindeer-wildlife-cute-animal-animals-pack-animations-4580960.gif", audio: "Deer" },
+        { name: "Turtle", image: "https://i.pinimg.com/originals/87/84/a2/8784a2a12fe1341c46e5ff640c6094ae.gif", audio: "Turtle" },
+        { name: "Dolphin", image: "https://www.animatedimages.org/data/media/186/animated-dolphin-image-0112.gif", audio: "Dolphin" }
+    ]
+};
+
+// Function to create SVG shapes
+function createShapeImage(shape) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "150");
+    svg.setAttribute("height", "150");
+    svg.setAttribute("viewBox", "0 0 150 150");
+    
+    let element;
+    const randomColor = getRandomColor();
+    
+    switch(shape) {
+        case "circle":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            element.setAttribute("cx", "75");
+            element.setAttribute("cy", "75");
+            element.setAttribute("r", "60");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "square":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            element.setAttribute("x", "25");
+            element.setAttribute("y", "25");
+            element.setAttribute("width", "100");
+            element.setAttribute("height", "100");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "triangle":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            element.setAttribute("points", "75,15 135,120 15,120");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "rectangle":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            element.setAttribute("x", "25");
+            element.setAttribute("y", "40");
+            element.setAttribute("width", "100");
+            element.setAttribute("height", "70");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "oval":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            element.setAttribute("cx", "75");
+            element.setAttribute("cy", "75");
+            element.setAttribute("rx", "65");
+            element.setAttribute("ry", "45");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "diamond":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            element.setAttribute("points", "75,15 135,75 75,135 15,75");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "star":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            const starPoints = calculateStarPoints(75, 75, 5, 60, 30);
+            element.setAttribute("points", starPoints);
+            element.setAttribute("fill", randomColor);
+            break;
+        case "heart":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            element.setAttribute("d", "M75,135 C75,135 15,87 15,55 C15,30 35,15 60,15 C65,15 70,16 75,20 C80,16 85,15 90,15 C115,15 135,30 135,55 C135,87 75,135 75,135 Z");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "hexagon":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            element.setAttribute("points", "75,15 130,45 130,105 75,135 20,105 20,45");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "pentagon":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            element.setAttribute("points", "75,15 135,60 110,120 40,120 15,60");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "crescent":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            element.setAttribute("d", "M100,75 C100,102 78,124 50,124 C40,124 30,121 22,116 C37,127 56,134 75,134 C108,134 135,107 135,75 C135,42 108,15 75,15 C56,15 37,22 22,33 C30,28 40,25 50,25 C78,25 100,47 100,75 Z");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "cross":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            element.setAttribute("d", "M60,15 L90,15 L90,60 L135,60 L135,90 L90,90 L90,135 L60,135 L60,90 L15,90 L15,60 L60,60 Z");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "arrow":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            element.setAttribute("d", "M15,75 L105,75 L105,45 L135,75 L105,105 L105,75");
+            element.setAttribute("fill", randomColor);
+            element.setAttribute("stroke", "#000");
+            element.setAttribute("stroke-width", "3");
+            break;
+        case "octagon":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            element.setAttribute("points", "50,15 100,15 135,50 135,100 100,135 50,135 15,100 15,50");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "trapezoid":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            element.setAttribute("points", "35,45 115,45 135,105 15,105");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "parallelogram":
+            element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            element.setAttribute("points", "35,45 125,45 115,105 25,105");
+            element.setAttribute("fill", randomColor);
+            break;
+        case "cube":
+            // Simple 2D representation of a cube
+            const cube = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            
+            const face1 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            face1.setAttribute("x", "35");
+            face1.setAttribute("y", "35");
+            face1.setAttribute("width", "80");
+            face1.setAttribute("height", "80");
+            face1.setAttribute("fill", randomColor);
+            face1.setAttribute("stroke", "#000");
+            face1.setAttribute("stroke-width", "2");
+            
+            const face2 = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            face2.setAttribute("points", "35,35 55,15 135,15 115,35");
+            face2.setAttribute("fill", lightenColor(randomColor));
+            face2.setAttribute("stroke", "#000");
+            face2.setAttribute("stroke-width", "2");
+            
+            const face3 = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            face3.setAttribute("points", "115,35 135,15 135,95 115,115");
+            face3.setAttribute("fill", darkenColor(randomColor));
+            face3.setAttribute("stroke", "#000");
+            face3.setAttribute("stroke-width", "2");
+            
+            cube.appendChild(face3);
+            cube.appendChild(face1);
+            cube.appendChild(face2);
+            
+            svg.appendChild(cube);
+            return svg.outerHTML;
+        case "sphere":
+            // Simple 2D representation of a sphere
+            element = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            element.setAttribute("cx", "75");
+            element.setAttribute("cy", "75");
+            element.setAttribute("r", "60");
+            element.setAttribute("fill", randomColor);
+            
+            const highlight = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            highlight.setAttribute("cx", "55");
+            highlight.setAttribute("cy", "55");
+            highlight.setAttribute("rx", "20");
+            highlight.setAttribute("ry", "15");
+            highlight.setAttribute("fill", "rgba(255,255,255,0.4)");
+            
+            svg.appendChild(element);
+            svg.appendChild(highlight);
+            return svg.outerHTML;
+        case "cylinder":
+            // Simple 2D representation of a cylinder
+            const cylinder = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            
+            const body = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            body.setAttribute("x", "35");
+            body.setAttribute("y", "40");
+            body.setAttribute("width", "80");
+            body.setAttribute("height", "70");
+            body.setAttribute("fill", randomColor);
+            
+            const top = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            top.setAttribute("cx", "75");
+            top.setAttribute("cy", "40");
+            top.setAttribute("rx", "40");
+            top.setAttribute("ry", "15");
+            top.setAttribute("fill", lightenColor(randomColor));
+            
+            const bottom = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            bottom.setAttribute("cx", "75");
+            bottom.setAttribute("cy", "110");
+            bottom.setAttribute("rx", "40");
+            bottom.setAttribute("ry", "15");
+            bottom.setAttribute("fill", darkenColor(randomColor));
+            
+            cylinder.appendChild(body);
+            cylinder.appendChild(bottom);
+            cylinder.appendChild(top);
+            
+            svg.appendChild(cylinder);
+            return svg.outerHTML;
+        case "cone":
+            // Simple 2D representation of a cone
+            const cone = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            
+            const coneBody = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            coneBody.setAttribute("points", "75,25 125,115 25,115");
+            coneBody.setAttribute("fill", randomColor);
+            
+            const coneBase = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+            coneBase.setAttribute("cx", "75");
+            coneBase.setAttribute("cy", "115");
+            coneBase.setAttribute("rx", "50");
+            coneBase.setAttribute("ry", "15");
+            coneBase.setAttribute("fill", darkenColor(randomColor));
+            
+            cone.appendChild(coneBody);
+            cone.appendChild(coneBase);
+            
+            svg.appendChild(cone);
+            return svg.outerHTML;
+        default:
+            element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            element.setAttribute("x", "25");
+            element.setAttribute("y", "25");
+            element.setAttribute("width", "100");
+            element.setAttribute("height", "100");
+            element.setAttribute("fill", randomColor);
+    }
+    
+    if (shape !== "cube" && shape !== "sphere" && shape !== "cylinder" && shape !== "cone") {
+        svg.appendChild(element);
+    }
+    
+    return svg.outerHTML;
+}
+
+// Helper function to calculate star points
+function calculateStarPoints(centerX, centerY, points, outerRadius, innerRadius) {
+    let starPoints = "";
+    const angleIncrement = Math.PI / points;
+    
+    for (let i = 0; i < points * 2; i++) {
+        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+        const x = centerX + radius * Math.sin(i * angleIncrement);
+        const y = centerY - radius * Math.cos(i * angleIncrement);
+        starPoints += `${x},${y} `;
+    }
+    
+    return starPoints.trim();
+}
+
+// Helper function to get random color
+function getRandomColor() {
+    const colors = [
+        "#FF6B6B", "#FF9E7D", "#FFCA3A", "#8AE66E", "#51DACF", 
+        "#4D96FF", "#9B5DE5", "#F15BB5", "#00BBF9", "#00F5D4",
+        "#FFC6FF", "#A2D2FF", "#CAFFBF", "#FDFFB6", "#FFD6A5"
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+// Helper functions to lighten and darken colors for 3D effect
+function lightenColor(color) {
+    // Simple approach - add white overlay
+    return color + "DD";
+}
+
+function darkenColor(color) {
+    // Simple approach - add black overlay
+    return color + "99";
+}
+
+// Initialize sections
+function initializeSections() {
+    Object.keys(data).forEach(section => {
+        const sectionElement = document.getElementById(`${section}-section`);
+        
+        data[section].forEach(item => {
+            const card = document.createElement("div");
+            card.className = "item-card";
+            
+            // Check if the image is SVG (starts with <svg) or a URL
+            let imageContent;
+            if (typeof item.image === 'string' && item.image.startsWith('<svg')) {
+                // For SVG content (shapes)
+                imageContent = item.image;
+            } else {
+                // For image URLs (fruits, vegetables, animals)
+                imageContent = `<img src="${item.image}" alt="${item.name}" loading="lazy">`;
+            }
+            
+            card.innerHTML = `
+                ${imageContent}
+                <div class="item-name">${item.name}</div>
+                <button class="sound-btn" onclick="playSound('${item.audio}')">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            `;
+            
+            card.addEventListener("click", () => {
+                playSound(item.audio);
+            });
+            
+            sectionElement.appendChild(card);
+        });
+    });
+}
+
+
+        // Show section
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById("home-section").style.display = "none";
+            document.getElementById("shapes-section").style.display = "none";
+            document.getElementById("fruits-section").style.display = "none";
+            document.getElementById("vegetables-section").style.display = "none";
+            document.getElementById("animals-section").style.display = "none";
+            
+            // Remove active class from all menu items
+            document.querySelectorAll(".menu-item").forEach(item => {
+                item.classList.remove("active");
+            });
+            
+            // Show selected section
+            document.getElementById(`${sectionName}-section`).style.display = "grid";
+            
+            // Add active class to selected menu item
+            document.querySelector(`.menu-item.${sectionName}`).classList.add("active");
+            
+            // Add back button if not on home page
+            if (sectionName !== "home") {
+                const section = document.getElementById(`${sectionName}-section`);
+                
+                // Check if back button already exists
+                if (!section.querySelector(".back-button")) {
+                    const backButton = document.createElement("div");
+                    backButton.className = "back-button";
+                    backButton.textContent = "Back to Home";
+                    backButton.onclick = () => showSection("home");
+                    section.appendChild(backButton);
+                }
+            }
+        }
+
+        // Speech synthesis for audio
+        function playSound(text) {
+            // Check if speech synthesis is supported
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.8; // Slightly slower for clarity
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.log("Speech synthesis not supported");
+                // Fallback option - could use audio files instead
+                alert(`This would play sound for: ${text}`);
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            initializeSections();
+        });
+    </script>
+</body>
+</html>
